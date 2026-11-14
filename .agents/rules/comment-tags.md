@@ -124,7 +124,7 @@ An `@ref:` line holds at least one of four forms. The hook resolves each one.
   | relative path | `./tool/cue/rules` | `@/tool/cue/rules` |
   | folder | `tool/cue/rules/` | `@/tool/cue/rules` |
   | leading slash (classpath) | `/application.conf` | the tracked file with that name |
-  | bare file name | `comment-tags-autofix.py` | the tracked file with that name |
+  | bare file name | `comment-tags-autofix.sh` | the tracked file with that name |
 
   A path counts when its first segment is a top-level repo entry. A bare name counts when exactly one tracked
   file has it. A name that several files share cannot be resolved in prose, so the hook skips it there.
@@ -187,7 +187,7 @@ One script, `.agents/scripts/comment-tags-staged.sh`, runs as two prek hooks (`p
 jj runs no git hook. Run `mise run lint` before `jj describe`: it runs prek on the files changed at `@`.
 `mise run lint --all` runs every hook on every file. Without a staged index, the script diffs `HEAD` (= `@-`) against the working copy.
 
-Before a commit, the script runs `comment-tags-autofix.py`. It fixes only a too-long tagged line it can wrap, and an exact
+Before a commit, the script runs `comment-tags-autofix.sh`. It fixes only a too-long tagged line it can wrap, and an exact
 missing `@ref:` the lint reports. `COMMENT_TAGS_AUTOFIX=0` turns it off.
 
 ```bash
