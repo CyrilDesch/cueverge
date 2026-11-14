@@ -28,6 +28,14 @@ import (
 	// @invariant: a rule package judges a sealed package that exists.
 	orphans: {for d in packages if strings.HasPrefix(d, "cogen/gen-sealed/") {(d): list.Contains(packages, "sealed/" + strings.TrimPrefix(d, "cogen/gen-sealed/")) & true}}
 
+	// @invariant: a sealed or rule file sits at <module>/<group>/<name>/<file>, never higher and never deeper.
+	shape: {for f, _ in files if strings.HasPrefix(f, "sealed/") || strings.HasPrefix(f, "cogen/gen-sealed/") {
+		(f): (len(strings.Split(strings.TrimPrefix(strings.TrimPrefix(f, "cogen/gen-sealed/"), "sealed/"), "/")) == 3) & true
+	}}
+
+	// @invariant: a cue file under gen sits at gen/<kind>/<name>/<file>, so no capture hides deeper.
+	genShape: {for f, _ in files if strings.HasPrefix(f, "gen/") {(f): (len(strings.Split(f, "/")) == 4) & true}}
+
 	// @invariant: a cue file under gen is written by a mechanism. Its name says which, never a hand-written name.
 	generatedOnly: {for f, _ in files if strings.HasPrefix(f, "gen/") {(f): (strings.HasSuffix(f, ".gen.cue") || strings.HasSuffix(f, ".export.cue")) & true}}
 }

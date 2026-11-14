@@ -66,7 +66,7 @@ object Templates:
                    |
                    |```sh
                    |mise install
-                   |cd cueverge && cue vet -c ./...    # the only check
+                   |cd cueverge && cue vet -c ./...    # the only check. CI adds -t tracked, to see a package at any depth
                    |cueverge site build               # the portal
                    |```
                    |""".stripMargin,
@@ -84,11 +84,17 @@ object Templates:
                    |_rules4:  _ @embed(glob=cogen/gen-sealed/*/*/*.cue, type=text, allowEmptyGlob)
                    |_gen3:    _ @embed(glob=gen/*/*/*.cue, type=text, allowEmptyGlob)
                    |
+                   |// @what: every cue file of the modules at any depth, one path per line. CI gives it, as CUE cannot list folders.
+                   |// @why: the fixed-depth globs skip a deeper package. With this list, the layout rule sees it and refuses it.
+                   |// @todo: back to one @embed glob with ** once CUE accepts it, and drop this tag.
+                   |_tracked: *"" | string @tag(tracked)
+                   |
                    |files: {
                    |	for f, _ in _sealed2 if !strings.Contains(f, "/_meta/") {(f): true}
                    |	for f, _ in _sealed3 if !strings.Contains(f, "/_meta/") {(f): true}
                    |	for f, _ in _rules4 if !strings.Contains(f, "/_meta/") {(f): true}
                    |	for f, _ in _gen3 if !strings.Contains(f, "/_meta/") {(f): true}
+                   |	for f in strings.Split(_tracked, "\\n") if f != "" && !strings.Contains(f, "/_meta/") {(f): true}
                    |}
                    |""".stripMargin,
             s"${Project.Folder}/cogen/kb/modules.cue" ->
@@ -134,7 +140,7 @@ object Templates:
                    |
                    |site: {
                    |	title: ${str(name)}
-                   |	groups: [{title: "Projet", pages: [(p.#FramePage & {#frame: fr.frame, #intents: ints.intents}).out]}]
+                   |	groups: [{title: "Project", pages: [(p.#FramePage & {#frame: fr.frame, #intents: ints.intents}).out]}]
                    |}
                    |""".stripMargin,
             ".github/workflows/cueverge.yml" ->
@@ -155,7 +161,8 @@ object Templates:
                   |      - uses: jdx/mise-action@v2
                   |        with:
                   |          install_args: github:cue-lang/cue
-                  |      - run: cue vet -c ./...
+                  |      # @why: the list of every cue file lets the layout rule see a package at any depth.
+                  |      - run: cue vet -c -t tracked="$(find sealed cogen/gen-sealed gen -name '*.cue' -not -path '*/_meta/*' 2>/dev/null)" ./...
                   |        working-directory: cueverge
                   |""".stripMargin
         )
