@@ -1,0 +1,10 @@
+# @what: Dependabot version updates of the GitHub Actions of the CI, every week.
+# @why: the other tools are pinned in mise.toml, which Dependabot does not read.
+# @ref: @/mise.toml
+# @ref: https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

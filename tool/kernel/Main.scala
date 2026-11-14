@@ -202,7 +202,8 @@ object Main extends KyoApp:
        |  cueverge capture check                        every capture extracts again to the same bytes
        |  cueverge runs <name> <runs-dir>...            import runs of the Go kernel into gen/runs
        |  cueverge diagram [round|init]
-       |  cueverge gate                                 the rule gate (issue #3), not built yet""".stripMargin
+       |  cueverge gate                                 the rule gate (issue #3), not built yet
+       |  cueverge --version                            the version of the binary and of its CUE module""".stripMargin
 
     // @what: the options of a round, after the subcommand.
     def roundOptions(args: List[String], o: Options): Either[String, Options] = args match
@@ -241,6 +242,7 @@ object Main extends KyoApp:
             case "diagram" :: Nil                   => Right(o.copy(command = "diagram", diagram = true))
             case "diagram" :: f :: Nil              => Right(o.copy(command = "diagram", diagram = true, rest = List(f)))
             case "gate" :: _                        => Right(o.copy(command = "gate"))
+            case ("--version" | "version") :: Nil  => Right(o.copy(command = "version"))
             case ("-h" | "--help" | "help") :: _    => Left(Usage)
             case _                                  => Left(Usage)
 
@@ -265,6 +267,7 @@ object Main extends KyoApp:
                 case "capture-project" => ProjectCapture.capture(o.rest(0), o.rest(1))
                 case "capture-check"   => WebCapture.check(o.dir).andThen(RunCapture.check(o.dir)).andThen(ProjectCapture.check(o.dir))
                 case "runs"            => RunCapture.capture(o.runs(0), o.runs(1), o.runs.drop(2))
+                case "version"         => Console.printLine(s"cueverge ${Project.Version}")
                 case "gate"            => Abort.fail("cueverge gate: the rule gate is not built yet (issue #3)")
                 case _                 => roundCommand(o)
                 }
