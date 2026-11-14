@@ -1,0 +1,49 @@
+[tools]
+hugo = "0.145.0"
+prek = "0.5.10"
+"github:cue-lang/cue" = "0.18.0-rc.4"
+# @what: polaris and cue-extended. A local build, linked with `mise link` until Polaris publishes releases.
+"github:CyrilDesch/polaris" = "0.0.0-b27ca809"
+# @what: the binary of this repo, built by tool/kernel/build.sh and linked into mise. The factory is its own first client.
+# @ref: $> mise run build
+# @ref: @/tool/kernel/build.sh
+"github:CyrilDesch/cueverge" = "0.1.0"
+
+[env]
+# @what: the CUE module of the tool (tool/cue/) is published to a local OCI registry until it goes to ghcr.io.
+# @ref: $> mise run tool:publish
+# @ref: @/tool/cue
+CUE_REGISTRY = "github.com/cyrildesch=localhost:5050+insecure,registry.cue.works"
+
+[tasks.lint]
+description = "prek on the files of the jj working-copy change (all files with --all)"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+if [ "${1:-}" = "--all" ]; then exec prek run --all-files; fi
+files=()
+n=0
+while IFS= read -r f; do if [ -e "$f" ]; then files+=("$f"); n=$((n + 1)); fi; done < <(jj diff --name-only -r @)
+if [ "$n" -eq 0 ]; then echo "lint: no file changed at @"; exit 0; fi
+exec prek run --files "${files[@]}"
+"""
+
+[tasks.build]
+description = "Build the cueverge binary into dist/cueverge/bin, and link it into mise as the version of the tool"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+tool/kernel/build.sh
+v=$(sed -n 's/^    val Version = "\\(.*\\)"$/\\1/p' tool/kernel/ProjectTools.scala)
+mise link -f "github:CyrilDesch/cueverge@$v" "$PWD/dist/cueverge"
+echo "linked github:CyrilDesch/cueverge@$v"
+"""
+
+[tasks."tool:publish"]
+description = "Publish the CUE module of the tool (tool/cue/) to the registry, at the version of the binary"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+v=$(sed -n 's/^    val Version = "\\(.*\\)"$/\\1/p' tool/kernel/ProjectTools.scala)
+cd tool/cue && cue vet -c ./... && cue mod publish "v$v"
+"""

@@ -1,0 +1,43 @@
+# @what: prek hooks of this repo. Rules in the comment-tags doc.
+# @ref: @/.agents/rules/comment-tags.md
+# @ref: https://github.com/j178/prek
+# @why: jj runs no git hook. Lint the files of the working-copy change by hand, before jj describe.
+# @ref: $> mise run lint
+exclude = '''(?x)^(
+  \.polaris/|
+  \.cache/|
+  \.bsp/|
+  \.scala-build/|
+  bin/|
+  cueverge/gen/
+)'''
+
+minimum_prek_version = "0.3.9"
+
+# @what: Rust-native hooks. They need no Python env and no clone.
+[[repos]]
+repo = "builtin"
+hooks = [
+  # @why: same-priority hooks run in parallel. These two fixers rewrite the same file, and in parallel they abort with `early eof`.
+  { id = "trailing-whitespace", exclude = '\.(gz|jsonl)$', priority = 0 },
+  { id = "end-of-file-fixer", exclude = '\.(gz|jsonl|svg)$', priority = 1 },
+  { id = "check-yaml", args = ["--allow-multiple-documents"], priority = 0 },
+  { id = "check-toml", priority = 0 },
+]
+
+[[repos]]
+repo = "local"
+hooks = [
+  # @why: upstream CUE test inputs and journal exports keep their own layout, so cue fmt skips them.
+  # @why: cue is the factory build when it is not on the PATH.
+  { id = "cuefmt", name = "cue fmt", entry = "cue fmt", language = "system", pass_filenames = true, types = ["cue"], exclude = '^cueverge/gen/', priority = 10 },
+  # @what: lints the comments that a change adds. One tagged line each, short blocks, references that resolve.
+  # @invariant: same file set as the references-only mode of the script.
+  # @ref: @/.agents/scripts/comment-tags-staged.sh
+  { id = "comment-tags", name = "comment tags (added comments)", entry = ".agents/scripts/comment-tags-staged.sh", language = "system", pass_filenames = true, files = '\.(scala|sc|java|ts|js|mjs|go|cue|sh|bash|zsh|py|toml|ya?ml|sql)$|(^|/)(Dockerfile|Makefile)', exclude = '^cueverge/gen/journal/', verbose = true, priority = 20 },
+  # @what: vets the whole base. Every rule is CUE, so this is the knowledge check, in local and in CI.
+  # @invariant: never skipped. A sealed package without rules, or a fact its rule refutes, fails here.
+  { id = "cue-vet", name = "cue vet (the base and the tool module)", entry = "sh -c 'cd cueverge && cue vet -c ./... && cd ../tool/cue && cue vet -c ./...'", language = "system", pass_filenames = false, always_run = true, priority = 30 },
+  # @why: a moved file or a removed mise task breaks references in comments that no diff touches.
+  { id = "comment-refs", name = "comment references (whole repo)", entry = ".agents/scripts/comment-tags-staged.sh", language = "system", pass_filenames = false, always_run = true, env = { COMMENT_TAGS_REFS = "1" }, verbose = true, priority = 20 },
+]

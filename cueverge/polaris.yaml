@@ -1,0 +1,7 @@
+# @what: the knowledge of the factory as a typed base. `cue vet -c ./...` checks it, `polaris site build` renders it.
+dir: .
+index: .polaris-index
+
+# @what: the site is one CUE value of type site.#Site of the Polaris module.
+# @ref: @/cueverge/portal/site.cue
+site: cue://factory.local/kb/portal/site
