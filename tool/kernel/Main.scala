@@ -202,7 +202,7 @@ object Main extends KyoApp:
        |  cueverge capture check                        every capture extracts again to the same bytes
        |  cueverge runs <name> <runs-dir>...            import runs of the Go kernel into gen/runs
        |  cueverge diagram [round|init]
-       |  cueverge gate                                 the rule gate (issue #3), not built yet
+       |  cueverge gate                                 the rule gate (issue #24), not built yet
        |  cueverge --version                            the version of the binary and of its CUE module""".stripMargin
 
     // @what: the options of a round, after the subcommand.
@@ -268,7 +268,7 @@ object Main extends KyoApp:
                 case "capture-check"   => WebCapture.check(o.dir).andThen(RunCapture.check(o.dir)).andThen(ProjectCapture.check(o.dir))
                 case "runs"            => RunCapture.capture(o.runs(0), o.runs(1), o.runs.drop(2))
                 case "version"         => Console.printLine(s"cueverge ${Project.Version}")
-                case "gate"            => Abort.fail("cueverge gate: the rule gate is not built yet (issue #3)")
+                case "gate"            => Abort.fail("cueverge gate: the rule gate is not built yet (issue #24)")
                 case _                 => roundCommand(o)
                 }
             }
