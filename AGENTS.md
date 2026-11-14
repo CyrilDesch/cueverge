@@ -21,7 +21,7 @@ cd tool/cue && cue vet -c ./...   # the CUE module of the tool
 mise run build                    # the CLI, into dist/cueverge/bin
 ```
 
-`cue vet` is the only check of the knowledge. There is no exception list.
+`cue vet` is the only check of the knowledge. There is no exception list. The lint also gives it the list of every cue file (`-t tracked`), so the layout rule sees a package at any depth.
 
 ## Rules
 

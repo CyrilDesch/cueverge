@@ -16,7 +16,7 @@ The repository holds the tool and the knowledge of the factory about itself:
 cd cueverge && cue vet -c ./...
 ```
 
-The command checks all the knowledge: each fact of `sealed/` against its source in `gen/`, by the rules of `cogen/`. There is no other check, and no exception. It needs CUE v0.18 (`mise.toml`). The lint (`mise run lint`) runs it too, with the check of the module of the tool.
+The command checks all the knowledge: each fact of `sealed/` against its source in `gen/`, by the rules of `cogen/`. There is no other check, and no exception. CUE cannot list folders, so the lint also gives it the list of every cue file (`-t tracked`): the layout rule then sees a package at any depth. It needs CUE v0.18 (`mise.toml`). The lint (`mise run lint`) runs it too, with the check of the module of the tool.
 
 ## Build the tool
 

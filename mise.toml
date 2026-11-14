@@ -1,6 +1,8 @@
 [tools]
 hugo = "0.145.0"
 prek = "0.5.10"
+# @todo: at each bump of CUE, check whether @embed accepts ** yet. If it does, drop the tracked tag of cueverge/inventory.cue.
+# @ref: @/cueverge/inventory.cue
 "github:cue-lang/cue" = "0.18.0-rc.4"
 # @what: polaris and cue-extended. A local build, linked with `mise link` until Polaris publishes releases.
 "github:CyrilDesch/polaris" = "0.0.0-b27ca809"
