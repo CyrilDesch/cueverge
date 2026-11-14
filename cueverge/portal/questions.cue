@@ -1,20 +1,20 @@
 package portal
 
-import "factory.local/kb/sealed/usine/questions"
+import "factory.local/kb/sealed/factory/questions"
 
-_weights:     ["décide de tout", "important", "secondaire"]
-_weightTitle: {"décide de tout": "Décide de tout", "important": "Important", "secondaire": "Secondaire"}
+_weights:     ["decides everything", "important", "secondary"]
+_weightTitle: {"decides everything": "Decides everything", "important": "Important", "secondary": "Secondary"}
 
 // @what: the questions page. One group per weight, the decisive ones first.
 questionsPage: {
 	slug:  "questions"
-	title: "Questions ouvertes"
-	description: "\(len([for _, q in questions.questions if q.status == "ouverte" {
+	title: "Open questions"
+	description: "\(len([for _, q in questions.questions if q.status == "open" {
 		q...
-	}])) questions sans réponse et \(len([for _, q in questions.questions if q.status == "résolue" {
+	}])) questions with no answer and \(len([for _, q in questions.questions if q.status == "resolved" {
 		q...
-	}])) résolues, de la plus lourde à la plus légère. Une question ouverte nomme l'expérience ou l'action qui y répondra."
-	footer: "Généré depuis le paquet `questions` au build."
+	}])) resolved, from the heaviest to the lightest. An open question names the experiment or the action that will answer it."
+	footer: "Generated from the package `questions` at build time."
 	blocks: [
 		{
 			stats: [for w in _weights {
@@ -25,7 +25,7 @@ questionsPage: {
 				tone: _tone[w]
 			}]
 		},
-		{filter: {facet: "weight", label: "Poids", options: _weights}},
+		{filter: {facet: "weight", label: "Weight", options: _weights}},
 		for w in _weights {
 			group: {
 				title: _weightTitle[w]
@@ -36,8 +36,8 @@ questionsPage: {
 						tone:  _tone[q.weight]
 						md:    q.whyItMatters
 						badges: [
-							if q.status == "résolue" {{badge: "résolue", tone: "accepted"}},
-							if q.answeredBy == _|_ {{badge: "aucune expérience", tone: "muted"}},
+							if q.status == "resolved" {{badge: "resolved", tone: "accepted"}},
+							if q.answeredBy == _|_ {{badge: "no experiment", tone: "muted"}},
 						]
 						facets: weight: q.weight
 					}]
@@ -63,10 +63,10 @@ questionsPage: {
 		title:  #q.question
 		hidden: true
 		blocks: [
-			{stats: [{label: "Poids", value: #q.weight, tone: _tone[#q.weight]}, {label: "Statut", value: #q.status}]},
-			{group: {title: "Pourquoi elle compte", blocks: [{md: #q.whyItMatters}]}},
+			{stats: [{label: "Weight", value: #q.weight, tone: _tone[#q.weight]}, {label: "Status", value: #q.status}]},
+			{group: {title: "Why it matters", blocks: [{md: #q.whyItMatters}]}},
 			{
-				group: {title: "Expérience qui y répond", blocks: [
+				group: {title: "Experiment that answers it", blocks: [
 					if #q.answeredBy != _|_ {
 						md: (#Links & {
 							#kind: "experiment"
@@ -75,11 +75,11 @@ questionsPage: {
 							#title: _title.experiment...
 						}).out
 					},
-					if #q.answeredBy == _|_ {hint: {style: "warning", md: "Aucune expérience ne répond encore à cette question."}},
+					if #q.answeredBy == _|_ {hint: {style: "warning", md: "No experiment answers this question yet."}},
 				]}
 			},
 			{
-				group: {title: "Actions qui y répondent", blocks: [
+				group: {title: "Actions that answer it", blocks: [
 					if _actionsAnswering[#key] != _|_ {
 						md: (#Links & {
 							#kind: "action"
@@ -88,10 +88,10 @@ questionsPage: {
 							#title: _title.action...
 						}).out
 					},
-					if _actionsAnswering[#key] == _|_ {hint: {style: "warning", md: "Aucune action ne vise encore cette question."}},
+					if _actionsAnswering[#key] == _|_ {hint: {style: "warning", md: "No action targets this question yet."}},
 				]}
 			},
 		]
-		footer: "Source : `questions.questions.\(#key)`."
+		footer: "Source: `questions.questions.\(#key)`."
 	}
 }

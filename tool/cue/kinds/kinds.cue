@@ -85,8 +85,8 @@ _words: {one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
 // @what: no measure exists yet. The fact names the action that builds it, and that action is not done.
 #Pending: {
 	kind:   "pending"
-	fact:   {holds: "inconnu", ...}
-	action: {status: !="fait", ...}
+	fact:   {holds: "unknown", ...}
+	action: {status: !="done", ...}
 }
 
 // @what: a fact of ours rests on facts that hold. An analogy cannot be proven, only anchored.

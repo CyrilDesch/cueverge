@@ -4,15 +4,15 @@
 package portal
 
 site: {
-	title:     "Usine logicielle : état de la réflexion"
+	title:     "Software factory: state of the thinking"
 	overrides: "theme"
 	// @what: the first page of the sidebar is the landing page, the one "/" opens.
 	groups: [
-		{title: "Bilan", pages: [accueil]},
-		{title: "Comprendre", pages: [featurePage]},
-		{title: "Suite", pages: [actionsPage, questionsPage]},
-		{title: "Preuves", pages: [experiencesPage]},
-		{title: "Cadre", pages: [principesPage, decisionsPage, contraintesPage, usinePage]},
-		{title: "Notes", pages: [papierBraid, etudeScion]},
+		{title: "Summary", pages: [homePage]},
+		{title: "Understand", pages: [featurePage]},
+		{title: "Next", pages: [actionsPage, questionsPage]},
+		{title: "Evidence", pages: [experimentsPage]},
+		{title: "Frame", pages: [principlesPage, decisionsPage, constraintsPage, factoryPage]},
+		{title: "Notes", pages: [braidPaper, scionStudy]},
 	]
 }
