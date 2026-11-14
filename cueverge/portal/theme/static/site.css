@@ -1,20 +1,20 @@
 /* Layout tweaks for this KB, loaded after the theme's docs.css (site.overrides). */
 
 /* The five figures of the front page fit on one row. */
-body[data-pd-path="accueil"] .pd-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-body[data-pd-path="accueil"] .pd-stat { padding: 12px 14px; }
-body[data-pd-path="accueil"] .pd-stat .pd-stat-value { font-size: 22px; white-space: nowrap; }
+body[data-pd-path="home"] .pd-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+body[data-pd-path="home"] .pd-stat { padding: 12px 14px; }
+body[data-pd-path="home"] .pd-stat .pd-stat-value { font-size: 22px; white-space: nowrap; }
 @media (max-width: 860px) {
-  body[data-pd-path="accueil"] .pd-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-pd-path="home"] .pd-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* The constraint tables share one set of column widths, so they line up. */
-body[data-pd-path="contraintes"] .pd-content table:not(.pd-heat) { table-layout: fixed; width: 100%; }
-body[data-pd-path="contraintes"] .pd-content table:not(.pd-heat) th:nth-child(1) { width: 32%; }
-body[data-pd-path="contraintes"] .pd-content table:not(.pd-heat) th:nth-child(2) { width: 31%; }
-body[data-pd-path="contraintes"] .pd-content table:not(.pd-heat) th:nth-child(3) { width: 20%; }
-body[data-pd-path="contraintes"] .pd-content table:not(.pd-heat) th:nth-child(4) { width: 17%; }
-body[data-pd-path="contraintes"] .pd-content .pd-badge { white-space: normal; border-radius: 8px; }
+body[data-pd-path="constraints"] .pd-content table:not(.pd-heat) { table-layout: fixed; width: 100%; }
+body[data-pd-path="constraints"] .pd-content table:not(.pd-heat) th:nth-child(1) { width: 32%; }
+body[data-pd-path="constraints"] .pd-content table:not(.pd-heat) th:nth-child(2) { width: 31%; }
+body[data-pd-path="constraints"] .pd-content table:not(.pd-heat) th:nth-child(3) { width: 20%; }
+body[data-pd-path="constraints"] .pd-content table:not(.pd-heat) th:nth-child(4) { width: 17%; }
+body[data-pd-path="constraints"] .pd-content .pd-badge { white-space: normal; border-radius: 8px; }
 
 /* Entry pages (a path with a "/"): the state, cost and order are short words, not big numbers. */
 body[data-pd-path*="/"] .pd-stats { grid-template-columns: repeat(auto-fill, minmax(150px, max-content)); }

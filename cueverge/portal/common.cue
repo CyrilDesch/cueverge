@@ -3,35 +3,35 @@ package portal
 import (
 	"strings"
 
-	"factory.local/kb/sealed/usine/actions"
-	"factory.local/kb/sealed/usine/decisions"
-	"factory.local/kb/sealed/usine/experiments"
-	"factory.local/kb/sealed/usine/principles"
-	"factory.local/kb/sealed/usine/questions"
+	"factory.local/kb/sealed/factory/actions"
+	"factory.local/kb/sealed/factory/decisions"
+	"factory.local/kb/sealed/factory/experiments"
+	"factory.local/kb/sealed/factory/principles"
+	"factory.local/kb/sealed/factory/questions"
 )
 
 // @what: the color of each value of an enumerated field, for a badge or the left edge of a card.
 _tone: {
-	"fait":                "accepted"
-	"prévu":               "info"
-	"interrompu":          "high"
-	"écarté":              "muted"
-	"testé sur un projet": "accepted"
-	"posé, non testé":     "info"
-	"acté":                "accepted"
-	"à confirmer":         "info"
-	"reporté":             "muted"
-	"décide de tout":      "high"
+	"done":                "accepted"
+	"planned":             "info"
+	"stopped":             "high"
+	"discarded":           "muted"
+	"tested on a project": "accepted"
+	"stated, not tested":  "info"
+	"settled":             "accepted"
+	"to confirm":          "info"
+	"postponed":           "muted"
+	"decides everything":  "high"
 	"important":           "info"
-	"secondaire":          "muted"
-	"à faire":             "info"
-	"en cours":            "medium"
-	"faible":              "low"
-	"moyen":               "medium"
-	"élevé":               "high"
-	"branché":             "accepted"
+	"secondary":           "muted"
+	"to do":               "info"
+	"in progress":         "medium"
+	"low":                 "low"
+	"medium":              "medium"
+	"high":                "high"
+	"wired":               "accepted"
 	"possible":            "info"
-	"sans équivalent":     "muted"
+	"no equivalent":       "muted"
 }
 
 // @what: A badge for an enumerated value, colored by _tone.
@@ -58,11 +58,11 @@ _href: {
 		}).out)/"
 	}}
 	experiment: {for k, _ in experiments.experiments {
-		(k): "/experiences/\((#Slug & {#key: k...
+		(k): "/experiments/\((#Slug & {#key: k...
 		}).out)/"
 	}}
 	principle: {for k, _ in principles.principles {
-		(k): "/principes/\((#Slug & {#key: k...
+		(k): "/principles/\((#Slug & {#key: k...
 		}).out)/"
 	}}
 	decision: {for k, _ in decisions.decisions {
@@ -117,7 +117,7 @@ _title: {
 
 // @what: the status of a constraint of the factory, computed and never declared.
 _tone: {
-	"tenue":       "accepted"
-	"non tenue":   "high"
-	"pas mesurée": "muted"
+	"holds":         "accepted"
+	"does not hold": "high"
+	"not measured":  "muted"
 }

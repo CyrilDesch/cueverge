@@ -4,7 +4,7 @@ import (
 	"list"
 	"strings"
 
-	"factory.local/kb/sealed/usine/actions"
+	"factory.local/kb/sealed/factory/actions"
 )
 
 // @what: The actions in their order, as [key, action] pairs.
@@ -19,11 +19,11 @@ _actionsAfter:     {for k, a in actions.actions if a.after != _|_ for r in a.aft
 actionsPage: {
 	slug:        "actions"
 	title:       "Actions"
-	description: "\(len(actions.actions)) actions, dans l'ordre. Chacune a une mesure et un verdict : sans eux, `cue vet` la refuse."
-	footer:      "Généré depuis le paquet `actions` au build."
+	description: "\(len(actions.actions)) actions, in order. Each one has a measure and a verdict: without them, `cue vet` refuses it."
+	footer:      "Generated from the package `actions` at build time."
 	blocks: [
-		{filter: {facet: "cost", label: "Coût", options: ["faible", "moyen", "élevé"]}},
-		{filter: {facet: "status", label: "État", options: ["à faire", "en cours", "fait"]}},
+		{filter: {facet: "cost", label: "Cost", options: ["low", "medium", "high"]}},
+		{filter: {facet: "status", label: "Status", options: ["to do", "in progress", "done"]}},
 		{
 			cards: [for x in _actionsInOrder {
 				let A = x.a
@@ -33,9 +33,9 @@ actionsPage: {
 				badges: [(#Badge & {
 					#v: A.status...
 				}).out, {
-					badge: "coût \(A.cost)"
+					badge: "cost \(A.cost)"
 					tone:  _tone[A.cost]...
-				}, if A.needsHuman != _|_ {{badge: "demande un humain", tone: "medium"}}]
+				}, if A.needsHuman != _|_ {{badge: "needs a human", tone: "medium"}}]
 				md:     "**Verdict.** \(A.verdict)"
 				facets: {cost: A.cost, status: A.status}
 			}]
@@ -64,16 +64,16 @@ actionsPage: {
 		blocks: [
 			{
 				stats: [
-					{label: "Ordre", value: "\(#a.order) / \(len(actions.actions))"},
-					{label: "État", value: #a.status, tone: _tone[#a.status]},
-					{label: "Coût", value: #a.cost, tone: _tone[#a.cost]},
+					{label: "Order", value: "\(#a.order) / \(len(actions.actions))"},
+					{label: "Status", value: #a.status, tone: _tone[#a.status]},
+					{label: "Cost", value: #a.cost, tone: _tone[#a.cost]},
 				]
 			},
-			{group: {title: "Mesure", blocks: [{md: #a.measure}]}},
-			{group: {title: "Verdict", blocks: [{hint: {style: "success", title: "Compte comme fait", md: #a.verdict}}]}},
-			if #a.needsHuman != _|_ {hint: {style: "warning", title: "Demande un humain", md: #a.needsHuman}},
+			{group: {title: "Measure", blocks: [{md: #a.measure}]}},
+			{group: {title: "Verdict", blocks: [{hint: {style: "success", title: "Counts as done", md: #a.verdict}}]}},
+			if #a.needsHuman != _|_ {hint: {style: "warning", title: "Needs a human", md: #a.needsHuman}},
 			if #a.after != _|_ {
-				group: {title: "Après", blocks: [{
+				group: {title: "After", blocks: [{
 					md: (#Links & {
 						#kind: "action"
 						#refs: #a.after...
@@ -83,7 +83,7 @@ actionsPage: {
 				}]}
 			},
 			if _actionsAfter[#key] != _|_ {
-				group: {title: "Débloque", blocks: [{
+				group: {title: "Unblocks", blocks: [{
 					md: (#Links & {
 						#kind: "action"
 						#refs: [for k, _ in _actionsAfter[#key] {_prefix.action + k}]
@@ -93,7 +93,7 @@ actionsPage: {
 				}]}
 			},
 			if #a.runs != _|_ {
-				group: {title: "Expérience", blocks: [{
+				group: {title: "Experiment", blocks: [{
 					md: (#Links & {
 						#kind: "experiment"
 						#refs: #a.runs...
@@ -103,7 +103,7 @@ actionsPage: {
 				}]}
 			},
 			if #a.answers != _|_ {
-				group: {title: "Répond à", blocks: [{
+				group: {title: "Answers", blocks: [{
 					md: (#Links & {
 						#kind: "question"
 						#refs: #a.answers...
@@ -113,6 +113,6 @@ actionsPage: {
 				}]}
 			},
 		]
-		footer: "Source : `actions.actions.\(#key)`."
+		footer: "Source: `actions.actions.\(#key)`."
 	}
 }

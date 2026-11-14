@@ -6,22 +6,22 @@ package schema
 import "strings"
 
 #Fact: {
-	// @what: the fact in one French sentence. The portal shows it. It is the claim, never the proof.
+	// @what: the fact in one English sentence. The portal shows it. It is the claim, never the proof.
 	says: string & strings.MinRunes(8) & strings.MaxRunes(200)
-	// @what: false when the sentence is false, inconnu when no measure exists yet. A rule proves each of the three.
+	// @what: false when the sentence is false, unknown when no measure exists yet. A rule proves each of the three.
 	// @why: no default. A default lets a rule pick the polarity in place of the fact.
-	holds: bool | "inconnu"
+	holds: bool | "unknown"
 	// @what: the number the fact states, when it states one. A number needs a number rule or a computed rule.
 	value?: number
 	unit?:  string
 	// @what: who states the fact, for a fact about another system. Our knowledge of it is attributed, never adopted.
-	selon?: string
+	attributedTo?: string
 	// @what: the key of a retired fact that this fact replaces.
 	supersedes?: string
 	// @what: for a conclusion of ours, the facts it rests on, as package.key. A derived rule resolves each one.
 	rests?: [string, ...string]
 	// @what: the part of a study a conclusion belongs to.
-	role?: "parallèle" | "leçon" | "refus" | "proposition"
+	role?: "parallel" | "lesson" | "refusal" | "proposal"
 }
 
 // @what: a tombstone. The key stays reserved, so a retired fact cannot come back unnoticed.

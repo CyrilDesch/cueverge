@@ -17,25 +17,25 @@ _page: kinds.#Page & {
 
 _sealed: schema.#Sealed & {
 	facts: {
-		mai:     {says: "Environ 2 500 fusions par jour en mai", holds: true, value: 2500}
-		equipe:  {says: "Sept personnes ont fait Scion", holds: true, value: 7}
-		antique: {says: "Antique fait partie de l'équipe", holds: true}
-		sapling: {says: "La page nomme Sapling", holds: false}
-		somme:   {says: "La somme des deux chiffres", holds: true, value: 2507}
-		appui:   {says: "Une conclusion qui repose sur deux faits", holds: true}
-		tenue:   {says: "La somme reste sous 3000", holds: true}
-		attente: {says: "Une mesure qui n'existe pas encore", holds: "inconnu"}
+		may:     {says: "About 2,500 merges per day in May", holds: true, value: 2500}
+		team:    {says: "Seven people built Scion", holds: true, value: 7}
+		antique: {says: "The team also built Antique", holds: true}
+		sapling: {says: "The page names Sapling", holds: false}
+		sum:     {says: "The sum of the two figures", holds: true, value: 2507}
+		support: {says: "A conclusion that rests on two facts", holds: true}
+		held:    {says: "The sum stays under 3000", holds: true}
+		waiting: {says: "A measure that does not exist yet", holds: "unknown"}
 	}
-	retired: ancien: {was: "Un ancien chiffre faux", why: "absent de la page"}
+	retired: old: {was: "An old wrong figure", why: "not on the page"}
 }
 
 cover: kinds.#Cover & {sealed: _sealed, by: {
-	mai:     kinds.#Number & {page: _page, at: 0, re: "around ([0-9,]+) changes"}
-	equipe:  kinds.#Number & {page: _page, at: 1, re: "team of ([a-z]+) people"}
+	may:     kinds.#Number & {page: _page, at: 0, re: "around ([0-9,]+) changes"}
+	team:    kinds.#Number & {page: _page, at: 1, re: "team of ([a-z]+) people"}
 	antique: kinds.#Mentions & {page: _page, at: 1, terms: ["scion", "antique", "five months"]}
 	sapling: kinds.#Absent & {page: _page, term: "Sapling"}
-	somme:   kinds.#Computed & {of: _sealed.facts.mai.value + _sealed.facts.equipe.value}
-	appui:   kinds.#Derived & {from: [_sealed.facts.mai, _sealed.facts.antique]}
-	tenue:   kinds.#Computed & {holds: _sealed.facts.somme.value < 3000}
-	attente: kinds.#Pending & {action: {status: "à faire"}}
+	sum:     kinds.#Computed & {of: _sealed.facts.may.value + _sealed.facts.team.value}
+	support: kinds.#Derived & {from: [_sealed.facts.may, _sealed.facts.antique]}
+	held:    kinds.#Computed & {holds: _sealed.facts.sum.value < 3000}
+	waiting: kinds.#Pending & {action: {status: "to do"}}
 }}

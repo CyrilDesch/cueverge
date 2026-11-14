@@ -2,48 +2,48 @@ package portal
 
 // @what: the figures of the front page. Every number is computed from the sealed packages.
 // @why: an aggregate for the front page, not knowledge. It lives in the portal, so no sealed package holds it.
-// @ref: @/cueverge/portal/accueil.cue
+// @ref: @/cueverge/portal/home.cue
 
 import (
 	"list"
 
-	"factory.local/kb/sealed/usine/actions"
-	"factory.local/kb/sealed/usine/decisions"
-	"factory.local/kb/sealed/usine/experiments"
-	"factory.local/kb/sealed/usine/principles"
-	"factory.local/kb/sealed/usine/questions"
+	"factory.local/kb/sealed/factory/actions"
+	"factory.local/kb/sealed/factory/decisions"
+	"factory.local/kb/sealed/factory/experiments"
+	"factory.local/kb/sealed/factory/principles"
+	"factory.local/kb/sealed/factory/questions"
 )
 
 _overview: {
-	_done: [for _, e in experiments.experiments if e.status == "fait" {
+	_done: [for _, e in experiments.experiments if e.status == "done" {
 		e...
 	}]
-	_tested: [for _, p in principles.principles if p.status == "testé sur un projet" {
+	_tested: [for _, p in principles.principles if p.status == "tested on a project" {
 		p...
 	}]
-	_decisive: [for _, q in questions.questions if q.weight == "décide de tout" if q.status == "ouverte" {
+	_decisive: [for _, q in questions.questions if q.weight == "decides everything" if q.status == "open" {
 		q...
 	}]
-	_pending: [for _, d in decisions.decisions if d.status == "à confirmer" {
+	_pending: [for _, d in decisions.decisions if d.status == "to confirm" {
 		d...
 	}]
 
 	notice: [{
-		text: "**Les expériences sont à refaire sur le premier projet.** Le premier exemple, cue-interpreter, est abandonné. Le premier projet est un fork de Mistral Vibe qui remplace le shell de l'agent par Tacit, des capacités typées que le compilateur vérifie. Tant qu'il n'a pas tourné, la base n'affirme aucune mesure."
+		text: "**The experiments must be run again on the first project.** The first example, cue-interpreter, is dropped. The first project is a fork of Mistral Vibe that replaces the shell of the agent with Tacit, typed capabilities that the compiler checks. Until it has run, the base states no measure."
 		tone: "high"
 	}]
 
-	thesis: "L'humain écrit une problématique et des contraintes, et approuve l'intention des changements. Des agents propriétaires de leurs ressources écrivent tout le code. Une boucle déterministe observe le système aux frontières, en continu, et le compare à sa version précédente selon des règles écrites avant. Les règles ne peuvent que se resserrer ; relâcher demande un humain."
+	thesis: "The human writes a problem and constraints, and approves the intent of the changes. Agents that own their resources write all the code. A deterministic loop observes the system at its boundaries, continuously, and compares it with its previous version by rules written beforehand. The rules can only tighten; loosening needs a human."
 
 	metrics: [
-		{label: "Premier projet", hint: "Mistral Vibe avec Tacit", value: actions.actions.monter_le_premier_projet.status, detail: "monté par cueverge init", tone: "info"},
-		{label: "Principes testés", hint: "sur un projet", value: "\(len(_tested)) / \(len(principles.principles))", detail: "les autres sont posés sans mesure", tone: "info"},
-		{label: "Expériences faites", hint: "avec leurs chiffres", value: "\(len(_done)) / \(len(experiments.experiments))", tone: "accepted"},
-		{label: "Questions décisives", hint: "sans réponse", value: "\(len(_decisive))", tone: "high"},
-		{label: "Décisions à confirmer", value: "\(len(_pending))", tone: "info"},
+		{label: "First project", hint: "Mistral Vibe with Tacit", value: actions.actions.set_up_the_first_project.status, detail: "set up by cueverge init", tone: "info"},
+		{label: "Principles tested", hint: "on a project", value: "\(len(_tested)) / \(len(principles.principles))", detail: "the others are stated with no measure", tone: "info"},
+		{label: "Experiments done", hint: "with their figures", value: "\(len(_done)) / \(len(experiments.experiments))", tone: "accepted"},
+		{label: "Decisive questions", hint: "with no answer", value: "\(len(_decisive))", tone: "high"},
+		{label: "Decisions to confirm", value: "\(len(_pending))", tone: "info"},
 	]
 
-	next: list.Take(list.Sort([for k, a in actions.actions if a.status != "fait" {
+	next: list.Take(list.Sort([for k, a in actions.actions if a.status != "done" {
 		order:   a.order
 		title:   a.title
 		measure: a.measure
@@ -53,14 +53,14 @@ _overview: {
 		ref:     "cue://actions/actions.\(k)"
 	}], {x: _, y: _, less: x.order < y.order}), 3)
 
-	decisive: [for k, q in questions.questions if q.weight == "décide de tout" if q.status == "ouverte" {
+	decisive: [for k, q in questions.questions if q.weight == "decides everything" if q.status == "open" {
 		question:     q.question
 		whyItMatters: q.whyItMatters
 		key:          k
 		ref:          "cue://questions/questions.\(k)"
 	}]
 
-	measured: [for k, e in experiments.experiments if e.status == "fait" {
+	measured: [for k, e in experiments.experiments if e.status == "done" {
 		title:  e.title
 		result: e.result
 		limit:  e.limits[0]

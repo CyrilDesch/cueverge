@@ -1,34 +1,34 @@
 # Cueverge
 
-Une usine logicielle faite d'agents, dont chaque règle est en CUE et chaque fait est prouvé.
+A software factory made of agents, where every rule is CUE and every fact is proven.
 
-Le dépôt contient l'outil et le savoir de l'usine sur elle-même :
+The repository holds the tool and the knowledge of the factory about itself:
 
-| Dossier | Contenu |
+| Folder | Holds |
 |---|---|
-| `tool/cue/` | Le module CUE de l'outil, `github.com/cyrildesch/cueverge` : les règles du juge et du sceau, les sortes de règle, la forme d'un fait, le cadre d'un projet. Un projet l'importe. |
-| `tool/kernel/` | Le CLI `cueverge`, en Scala avec Kyo : `init`, `round`, `approve`, `site`, `upgrade`, `capture`… |
-| `cueverge/` | Le savoir de l'usine : expériences, principes, décisions, contraintes, questions, actions, études, et son portail. C'est le premier client de l'outil, rangé comme `cueverge init` range un projet. |
+| `tool/cue/` | The CUE module of the tool, `github.com/cyrildesch/cueverge`: the rules of the judge and the seal, the kinds of rule, the shape of a fact, the frame of a project. A project imports it. |
+| `tool/kernel/` | The `cueverge` CLI, in Scala with Kyo: `init`, `round`, `approve`, `site`, `upgrade`, `capture`… |
+| `cueverge/` | The knowledge of the factory: experiments, principles, decisions, constraints, questions, actions, studies, and its portal. It is the first client of the tool, laid out as `cueverge init` lays out a project. |
 
-## Vérifier
+## Check
 
 ```sh
 cd cueverge && cue vet -c ./...
 ```
 
-La commande vérifie tout le savoir : chaque fait de `sealed/` contre sa source dans `gen/`, par les règles de `cogen/`. Il n'y a pas d'autre contrôle, ni d'exception. Il faut CUE v0.18 (`mise.toml`). Le lint (`mise run lint`) la lance aussi, avec la vérification du module de l'outil.
+The command checks all the knowledge: each fact of `sealed/` against its source in `gen/`, by the rules of `cogen/`. There is no other check, and no exception. It needs CUE v0.18 (`mise.toml`). The lint (`mise run lint`) runs it too, with the check of the module of the tool.
 
-## Construire l'outil
+## Build the tool
 
 ```sh
-mise run tool:publish   # publie tool/cue au registre de CUE_REGISTRY
-mise run build          # construit dist/cueverge/bin et le lie dans mise
+mise run tool:publish   # publishes tool/cue to the registry of CUE_REGISTRY
+mise run build          # builds dist/cueverge/bin and links it into mise
 ```
 
-## Construire le portail
+## Build the portal
 
 ```sh
 cueverge site build
 ```
 
-Hugo 0.145.0 vient de mise (`mise.toml`). Pour un aperçu local : `cueverge site serve`.
+Hugo 0.145.0 comes from mise (`mise.toml`). For a local preview: `cueverge site serve`.
