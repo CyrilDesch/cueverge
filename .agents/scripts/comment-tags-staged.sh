@@ -26,7 +26,7 @@ fi
 [[ $# -eq 0 ]] && exit 0
 # @why: auto-fix receives the linter's exact findings and only revisits changed comment blocks.
 if [[ $refs != 1 && ${COMMENT_TAGS_AUTOFIX:-1} == 1 && ${COMMENT_TAGS_AUTOFIX_RUNNING:-0} != 1 ]]; then
-  COMMENT_TAGS_AUTOFIX_RUNNING=1 python3 "$root/.agents/scripts/comment-tags-autofix.py" "$@"
+  COMMENT_TAGS_AUTOFIX_RUNNING=1 "$root/.agents/scripts/comment-tags-autofix.sh" "$@"
 fi
 tasks=$(command -v mise >/dev/null && (cd "$root" && mise tasks --no-header 2>/dev/null | awk '{ print $1 }') | sort -u | tr '\n' ' ')
 # @why: only tracked top-level entries. An ignored folder on disk (Mill `out/`, `.bsp/`) made the result depend on the local build.
