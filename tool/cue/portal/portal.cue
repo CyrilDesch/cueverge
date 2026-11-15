@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/cyrildesch/cueverge/frame"
+	"github.com/cyrildesch/cueverge/project"
 )
 
 // @what: the slug of a key. A page path accepts [a-z0-9-] only, so "_" becomes "-".
@@ -46,6 +47,65 @@ import (
 				}]}
 			},
 			if len(#intents) > 0 {group: {title: "Intents", blocks: [{cards: [for k, i in #intents {title: k, tone: "accepted", md: "\(i.says)\n\nServes: \(i.serves)"}]}]}},
+		]
+	}
+}
+
+// @what: the state of an objective or a constraint, as its rule computes it, and its tone.
+_state: {
+	constraint: {"true": "holds", "false": "does not hold", "unknown": "not measured"}
+	objective:  {"true": "reached", "false": "missed", "unknown": "open"}
+	tone:       {"true": "accepted", "false": "high", "unknown": "muted"}
+}
+
+// @what: the page of the objectives and constraints of a project. The problem, then each objective with its state, then the constraints.
+// @invariant: no state is written here. Each one is the polarity of a sealed fact, which its rule computes.
+#ProjectPage: {
+	#problem:     project.#ProblemPackage
+	#objectives:  project.#ObjectivesPackage
+	#constraints: project.#ConstraintsPackage
+	let P = [for _, f in #problem.facts {f.says}]
+	out: {
+		slug:        "objectives"
+		title:       "Objectives and constraints"
+		description: strings.Join(P, " ")
+		footer:      "Generated at build time from the sealed packages problem, objectives and constraints. Each state is computed by a rule."
+		// @why: an empty group is left out, since the site refuses it.
+		blocks: [
+			{
+				stats: [
+					{label: "objectives", value: len(#objectives.facts), tone: "info"},
+					for v in ["true", "false", "unknown"] {
+						label: "constraints \(_state.constraint[v])"
+						value: len([for _, c in #constraints.facts if "\(c.holds)" == v {c}])
+						tone:  _state.tone[v]
+					},
+				]
+			},
+			if len(#objectives.facts) > 0 {
+				group: {title: "Objectives", blocks: [{
+					cards: [for k, o in #objectives.facts {
+						title:  k
+						tone:   _state.tone["\(o.holds)"]
+						badges: [{badge: _state.objective["\(o.holds)"], tone: _state.tone["\(o.holds)"]}]
+						let By = [for ck, c in #constraints.facts for s in c.serves if s == k {"`\(ck)`"}]
+						md: "\(o.says)\n\n*\(o.why)*\n\nServed by: \(strings.Join(By, ", "))"
+					}]
+				}]}
+			},
+			if len(#constraints.facts) > 0 {
+				group: {title: "Constraints", blocks: [{
+					table: {
+						columns: ["Constraint", "Measure", "Serves", "State"]
+						rows: [for k, c in #constraints.facts {[
+							"**\(k)**. \(c.says)",
+							c.measure,
+							strings.Join([for o in c.serves {"`\(o)`"}], ", "),
+							{badge: _state.constraint["\(c.holds)"], tone: _state.tone["\(c.holds)"]},
+						]}]
+					}
+				}]}
+			},
 		]
 	}
 }

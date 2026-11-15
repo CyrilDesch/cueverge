@@ -1,14 +1,18 @@
 package portal
 
-import "strings"
+import (
+	"strings"
 
-// @what: the front page. The thesis, what is not proven, the key figures, what was measured, what decides, what comes next.
+	"factory.local/kb/sealed/project/problem"
+)
+
+// @what: the front page. The problem, what is not proven, the key figures, what was measured, what decides, what comes next.
 // @invariant: every figure comes from the front page aggregate, never written here.
 // @ref: @/cueverge/portal/overview.cue
 homePage: {
 	slug:        "home"
 	title:       "Overview"
-	description: _overview.thesis
+	description: problem.facts.problem.says
 	footer:      "Figures computed at build time from the packages `experiments`, `principles`, `questions`, `decisions` and `actions`."
 	blocks: [
 		for n in _overview.notice {hint: {style: "danger", md: n.text}},

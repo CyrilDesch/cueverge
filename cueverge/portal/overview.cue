@@ -33,8 +33,6 @@ _overview: {
 		tone: "high"
 	}]
 
-	thesis: "The human writes a problem and constraints, and approves the intent of the changes. Agents that own their resources write all the code. A deterministic loop observes the system at its boundaries, continuously, and compares it with its previous version by rules written beforehand. The rules can only tighten; loosening needs a human."
-
 	metrics: [
 		{label: "First project", hint: "Mistral Vibe with Tacit", value: actions.actions.set_up_the_first_project.status, detail: "set up by cueverge init", tone: "info"},
 		{label: "Principles tested", hint: "on a project", value: "\(len(_tested)) / \(len(principles.principles))", detail: "the others are stated with no measure", tone: "info"},
