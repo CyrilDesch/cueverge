@@ -41,7 +41,11 @@ object Init:
         Flow.init("init", description = "Make a project of a folder: scaffold, draft the frame with Claude, vet, await a person, adopt.")
             .output("problem", description = "the problem, as the person states it")(_ => o.problem.trim)
             .output("scaffold", description = "the files of a project, created where none exists, without AI") { ctx =>
-                Sync.defer(scaffold(root, o.module, ctx.problem))
+                Sync.defer(scaffold(root, o.module, ctx.problem)).map { sc =>
+                    // @why: the templates are not in the layout of cue fmt, so a new project would fail its first lint.
+                    val cue = (sc.created ++ sc.completed).filter(r => r.endsWith(".cue") && !r.startsWith(s"${Project.Folder}/gen/"))
+                    Tools.cueFmt(cue.map(r => root.resolve(r).toString)).andThen(sc)
+                }
             }
             .output("draft", description = "claude -p in the sandbox runtime: reads the repository, writes only the draft") { ctx =>
                 Main.orFail(draft(root, ctx.problem))
@@ -66,6 +70,8 @@ object Init:
                 Files.createDirectories(f.getParent): Unit
                 Files.writeString(f, text): Unit
                 (Some(rel), None)
+            // @why: a module that holds the tool in cue.mod/pkg reads it there. A dependency too makes every import of the tool ambiguous.
+            else if rel == s"${Project.Folder}/cue.mod/module.cue" && Files.exists(vendored(root)) then (None, None)
             else
                 val before = Files.readString(f)
                 val after  = Templates.merge(rel, before, text)
@@ -75,6 +81,9 @@ object Init:
                     (None, Some(rel))
         }
         Scaffold(mod, name, outcome.flatMap(_._1), outcome.flatMap(_._2))
+
+    // @what: the tool module inside cue.mod/pkg of the project, as the factory itself holds it.
+    def vendored(root: JPath): JPath = module(root).resolve("cue.mod/pkg").resolve(Project.Module.stripSuffix("@v0"))
 
     // @what: the module path of a folder that already is a CUE module. The scaffold keeps it.
     def existingModule(root: JPath): Option[String] =
@@ -88,7 +97,7 @@ object Init:
         val dir  = root.resolve(DraftDir)
         val file = dir.resolve("draft.cue")
         for
-            p <- Tools.exportedImport(root, s"${Project.Module.stripSuffix("@v0")}/frame", "init")
+            p <- Tools.exportedImport(module(root), s"${Project.Module.stripSuffix("@v0")}/frame", "init")
             _ <- Sync.defer {
                 Files.createDirectories(dir): Unit
                 Files.deleteIfExists(file): Unit
@@ -161,7 +170,7 @@ object Init:
                 s"${Project.Folder}/intents/intents.cue" -> Templates.intents(s.module, value("intents"), v.hash)
             )
             Sync.defer(files.foreach((rel, text) => Files.writeString(root.resolve(rel), text): Unit))
-                .andThen(Tools.fmt(files.map((rel, _) => root.resolve(rel).toString)))
+                .andThen(Tools.cueFmt(files.map((rel, _) => root.resolve(rel).toString)))
                 .andThen(Tools.vetAll(module(root)).map {
                     case Left(report) => Abort.fail(s"init: the adopted frame does not vet\n${Main.clip(report, 2000)}")
                     case Right(())    => Adopted(files.map(_._1))

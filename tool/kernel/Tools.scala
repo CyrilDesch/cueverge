@@ -51,6 +51,11 @@ object Tools:
                 .map(_ => Sync.defer(Files.delete(tmp)))
         }
 
+    // @what: cue fmt on files, as the cue fmt hook of a project formats them. Never for a capture under gen.
+    def cueFmt(files: Seq[String])(using Frame): Unit < (Async & Abort[String]) =
+        if files.isEmpty then Kyo.unit
+        else call(JPath.of("").toAbsolutePath, (Seq(Cue, "fmt") ++ files.map(f => JPath.of(f).toAbsolutePath.toString))*).map(_ => ())
+
     // @what: cue-extended fmt on files.
     def fmt(files: Seq[String])(using Frame): Unit < (Async & Abort[String]) =
         if files.isEmpty then Kyo.unit
