@@ -4,6 +4,7 @@
 package kinds
 
 import (
+	"list"
 	"strconv"
 	"strings"
 	"regexp"
@@ -103,7 +104,33 @@ _words: {one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
 	citedBy: []
 }
 
-#Rule: #Mentions | #Quote | #Number | #Absent | #Computed | #Derived | #Pending | #Discarded
+// @what: a statement of a person. It holds because a person approved this exact text, in a journaled approval.
+#Approved: {
+	kind:     "approved"
+	fact:     {holds: true, says: string, ...}
+	approved: [...string]
+	found:    list.Contains(approved, fact.says) & true
+}
+
+// @what: a measure that no round gives yet. The fact is unknown, and the verdicts of the rounds hold none for it.
+#Unmeasured: {
+	kind: "unmeasured"
+	fact: {holds: "unknown", ...}
+	measured: [string]: bool
+	key:  string
+	none: (measured[key] == _|_) & true
+}
+
+// @what: a fact that waits on others. It is unknown while one of the facts it rests on is unknown, and none is false.
+#Open: {
+	kind:  "open"
+	fact:  {holds: "unknown", ...}
+	from!: [...{holds: bool | "unknown", ...}]
+	open:  (len([for f in from if f.holds == "unknown" {f}]) > 0) & true
+	sound: len([for f in from if f.holds == false {f}]) & 0
+}
+
+#Rule: #Mentions | #Quote | #Number | #Absent | #Computed | #Derived | #Pending | #Discarded | #Approved | #Unmeasured | #Open
 
 // @what: the rules of one sealed package. Every fact has exactly one rule, a number has a strong rule, a tombstone stays dead.
 #Cover: {
